@@ -3,10 +3,17 @@ package owfs
 import (
 	"encoding/binary"
 	"fmt"
-	//"log"
+	"net"
+	"strings"
 )
 
 func (oc *OwfsClient) Dir(path string) ([]string, error) {
+	conn, err := net.Dial("tcp", oc.connString)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to connect to owserver: %s", err)
+	}
+	defer conn.Close()
+
 	payload := make([]byte, len(path)+1) // To get null terminated
 	copy(payload, []byte(path))
 	data := RequestHeader{
@@ -17,11 +24,11 @@ func (oc *OwfsClient) Dir(path string) ([]string, error) {
 	ret := []string{}
 
 	//log.Println("Attempting to send data")
-	err := binary.Write(oc.conn, binary.BigEndian, data)
+	err = binary.Write(conn, binary.BigEndian, data)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to write header to owserver: %s", err)
 	}
-	err = binary.Write(oc.conn, binary.BigEndian, payload)
+	err = binary.Write(conn, binary.BigEndian, payload)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to write payload to owserver: %s", err)
 	}
@@ -30,7 +37,7 @@ func (oc *OwfsClient) Dir(path string) ([]string, error) {
 	var response ResponseHeader
 
 	for {
-		err = binary.Read(oc.conn, binary.BigEndian, &response)
+		err = binary.Read(conn, binary.BigEndian, &response)
 		if err != nil {
 			return nil, fmt.Errorf("Failed to read header from owserver: %s", err)
 		}
@@ -38,11 +45,11 @@ func (oc *OwfsClient) Dir(path string) ([]string, error) {
 		//response.dump()
 		if response.PayloadLength > 0 {
 			buf := make([]byte, response.PayloadLength)
-			err = binary.Read(oc.conn, binary.BigEndian, &buf)
+			err = binary.Read(conn, binary.BigEndian, &buf)
 			if err != nil {
 				return nil, fmt.Errorf("Failed to read payload from owserver: %s", err)
 			}
-			ret = append(ret, string(buf))
+			ret = append(ret, strings.TrimSpace(string(buf)))
 			//log.Println("Response Payload: ", string(buf))
 		} else {
 			break
