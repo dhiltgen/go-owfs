@@ -49,7 +49,7 @@ func (oc *OwfsClient) Read(path string) (string, error) {
 		}
 		return strings.TrimSpace(string(buf)), nil
 	} else {
-		response.dump()
+		//response.dump()
 		return "", fmt.Errorf("Zero length data for device %s", path)
 	}
 }
