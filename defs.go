@@ -19,20 +19,20 @@ const (
 )
 
 type RequestHeader struct {
-	Version       uint32
-	PayloadLength uint32
-	Type          uint32
-	Flags         uint32
-	Size          uint32
-	Offset        uint32
+	Version       int32
+	PayloadLength int32
+	Type          int32
+	Flags         int32
+	Size          int32
+	Offset        int32
 }
 type ResponseHeader struct {
-	Version       uint32
-	PayloadLength uint32
-	Ret           uint32
-	Flags         uint32
-	Size          uint32
-	Offset        uint32
+	Version       int32
+	PayloadLength int32
+	Ret           int32
+	Flags         int32
+	Size          int32
+	Offset        int32
 }
 
 func (h ResponseHeader) dump() {
