@@ -18,7 +18,7 @@ func (oc *OwfsClient) Dir(path string) ([]string, error) {
 	copy(payload, []byte(path))
 	data := RequestHeader{
 		Type:          msg_dir,
-		PayloadLength: uint32(len(payload)),
+		PayloadLength: int32(len(payload)),
 	}
 
 	ret := []string{}
