@@ -36,6 +36,7 @@ func (oc *OwfsClient) Read(path string) (string, error) {
 	//log.Println("Attempting to read response")
 	var response ResponseHeader
 
+	// Cap the max number of pings we'll process
 	for i := 0; i < 5; i++ {
 		err = binary.Read(conn, binary.BigEndian, &response)
 		if err != nil {
