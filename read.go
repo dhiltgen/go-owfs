@@ -51,6 +51,8 @@ func (oc *OwfsClient) Read(path string) (string, error) {
 
 	if response.PayloadLength == 0 {
 		return "", fmt.Errorf("Zero length data for device %s", path)
+	} else if response.PayloadLength < 0 {
+		return "", fmt.Errorf("Invalid length data for device %s: %d", path, response.PayloadLength)
 	} else if response.PayloadLength > 65536 {
 		return "", fmt.Errorf("Payload too large: %d path: %s", response.PayloadLength, path)
 	} else {
