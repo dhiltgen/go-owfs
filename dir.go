@@ -18,7 +18,7 @@ func (oc *OwfsClient) Dir(path string) ([]string, error) {
 	copy(payload, []byte(path))
 	data := RequestHeader{
 		Type:          msg_dir,
-		PayloadLength: uint32(len(payload)),
+		PayloadLength: int32(len(payload)),
 	}
 
 	ret := []string{}
@@ -49,7 +49,7 @@ func (oc *OwfsClient) Dir(path string) ([]string, error) {
 			if err != nil {
 				return nil, fmt.Errorf("Failed to read payload from owserver: %s", err)
 			}
-			ret = append(ret, strings.TrimSpace(string(buf)))
+			ret = append(ret, strings.TrimSpace(string(buf[:len(buf)-1])))
 			//log.Println("Response Payload: ", string(buf))
 		} else {
 			break
